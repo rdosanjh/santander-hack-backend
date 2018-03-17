@@ -3,13 +3,15 @@ const http = require('http');
 var twilio = require('twilio');
 
 var bodyParser = require('body-parser')
+var cors = require('cors')
 
 
 var express = require('express'),
     app = express(),
     port = process.env.PORT || 3000;
 app.use(bodyParser());
-    
+app.use(cors())
+
 const KEY = "4c2ym25yptkhdfvxrgqi413b0pdzwsueq4q2bqqb";
 const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIiOiIifQ.G5ed2SpILJdLUmjoXVGYWTMSQlJ8boLptydemtOM52Q";
 
