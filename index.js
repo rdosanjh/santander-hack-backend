@@ -168,7 +168,7 @@ app.post('/limits', (req, res) => {
 })
 
 app.post('/response-style', (req, res) => {
-    db.set('limits', req.body.style);
+    db.set('style', req.body.style);
     res.status(200);
 })
 
