@@ -15,6 +15,7 @@
     "express": "^4.16.3",
     "node-fetch": "^2.1.1",
     "node-hue-api": "^2.4.2",
+    "node-ifttt-maker": "^1.0.2",
     "twilio": "^3.13.1"
   },
   "devDependencies": {

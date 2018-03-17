@@ -13,6 +13,37 @@ var express = require('express'),
 app.use(bodyParser());
 app.use(cors())
 
+let changeLights = (color) => {
+    const IFTTT = require('node-ifttt-maker');
+    const ifttt = new IFTTT('b4SJByzu05UT4yAQNMlFhK');
+     
+    const event = 'pelican';
+    if(color === 'red'){
+
+    }
+    if(color === 'amber'){
+        
+    }
+    if(color === 'green'){
+        
+    }
+    const params = {
+        'value1': color,
+        'value2': 2,
+        'value3': {
+            x: 1, y: 2
+        }
+    }
+     
+    ifttt
+      .request({ event, params })
+      .then((response) => {
+          console.log(response);
+      })
+      .catch((err) => {});
+     
+}
+
 db.set('limits', {
     low: 1000,
     high: 3000
@@ -128,6 +159,7 @@ app.get('/account', (req, res) => {
             console.log(result)
             result.balance.responseStyle = db.get('style');
             result.balance.level = getLevel(result.balance.amount)
+            changeLights(result.balance.level);
             return res.json(result)
         })
 
