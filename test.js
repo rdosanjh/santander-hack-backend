@@ -1,44 +1,57 @@
-// const http = require('http')
+var hue = require("node-hue-api");
+
+var displayBridges = function(bridge) {
+	console.log("Hue Bridges Found: " + JSON.stringify(bridge));
+};
+
+// --------------------------
+// Using a promise
+hue.nupnpSearch().then(displayBridges).done();
+
+var HueApi = require("node-hue-api").HueApi;
+//////////////////////////
+
+let host = "10.1.210.46"
+let userDescription = "Pelican Balance";
+;
 
 
-var _this = this;
-const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIiOiIifQ.G5ed2SpILJdLUmjoXVGYWTMSQlJ8boLptydemtOM52Q";
-const url = 'https://santander.openbankproject.com/obp/v3.0.0/banks/santander.01.uk.sanuk/accounts-held';
+var displayUserResult = function(result) {
+    console.log("Created user: " + JSON.stringify(result));
+};
 
-const http = require('http')
+var displayError = function(err) {
+    console.log(err);
+};
 
-http.get('http://167.99.82.88:3000/account', (res) => {
-    const { statusCode } = res;
-    const contentType = res.headers['content-type'];
-  
-    let error;
-    if (statusCode !== 200) {
-      error = new Error('Request Failed.\n' +
-                        `Status Code: ${statusCode}`);
-    } else if (!/^application\/json/.test(contentType)) {
-      error = new Error('Invalid content-type.\n' +
-                        `Expected application/json but received ${contentType}`);
-    }
-    if (error) {
-      console.error(error.message);
-      // consume response data to free up memory
-      res.resume();
-      return;
-    }
-  
-    res.setEncoding('utf8');
-    let rawData = '';
-    res.on('data', (chunk) => { rawData += chunk; });
-    res.on('end', () => {
-      try {
-        const parsedData = JSON.parse(rawData);
-        //////////////////////////////////
-        console.log(parsedData.balance.amount);
-        //////////////////////////////////
-      } catch (e) {
-        console.error(e.message);
-      }
-    });
-  }).on('error', (e) => {
-    console.error(`Got error: ${e.message}`);
-  });
+var hue = new HueApi();
+
+// --------------------------
+// Using a promise
+hue.registerUser(host, userDescription)
+    .then(displayUserResult)
+    .fail(displayError)
+    .done();
+
+// --------------------------
+// Using a callback (with default description and auto generated username)
+hue.createUser(host, function(err, user) {
+	if (err) throw err;
+	displayUserResult(user);
+});
+
+let username = 'yuq-WfWDiIfwHsQ-Babzx8pYJ336yK2LONaqhsbE';
+
+var api = new HueApi(host, username);
+
+var displayResult = function(result) {
+    console.log(JSON.stringify(result, null, 2));
+};
+
+// --------------------------
+// Using a promise
+//api.registeredUsers().then(displayResult).done();
+
+api.lights()
+.then(displayResult)
+.done();
