@@ -164,12 +164,26 @@ app.post('/limits', (req, res) => {
         res.status(400);
     }
     db.set('limits', req.body);
-    res.status(200);
+    res.status(200).send();
+})
+
+app.post('/limits', (req, res) => {
+    if(!(req.body.low && req.body.high)){
+        res.status(400);
+    }
+    let limits = db.get('limits');
+    res.json({limits});
 })
 
 app.post('/response-style', (req, res) => {
     db.set('style', req.body.style);
-    res.status(200);
+    res.status(200).send();
+})
+
+
+app.get('/response-style', (req, res) => {
+    let style = db.get('style');
+    res.json({style});
 })
 
 app.post('/transaction', (req, res) => {
