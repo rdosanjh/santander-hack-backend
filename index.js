@@ -127,6 +127,7 @@ app.get('/account', (req, res) => {
             console.log("------------------");
             console.log(result)
             result.balance.responseStyle = db.get('style');
+            result.balance.level = getLevel(result.balance.amount)
             return res.json(result)
         })
 
