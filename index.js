@@ -5,12 +5,20 @@ var twilio = require('twilio');
 var bodyParser = require('body-parser')
 var cors = require('cors')
 
+var db = new Map();
 
 var express = require('express'),
     app = express(),
     port = process.env.PORT || 3000;
 app.use(bodyParser());
 app.use(cors())
+
+db.set('limits', {
+    low: 1000,
+    high: 3000
+})
+
+db.set('style', 'normal');
 
 const KEY = "4c2ym25yptkhdfvxrgqi413b0pdzwsueq4q2bqqb";
 const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIiOiIifQ.G5ed2SpILJdLUmjoXVGYWTMSQlJ8boLptydemtOM52Q";
@@ -35,8 +43,25 @@ app.get('/ping', (req, res) => {
     res.json({ res: "pong" })
 })
 
-app.post('/ping-sms', (req, res) => {
+let getLevel = (balance) => {
+    let limits = db.get('limits')
     
+    if (balance < limits.low) {
+        return 'red'
+    }
+
+    if (balance >= limits.low && balance <= limits.high) {
+        return 'amber'
+    }
+
+    if (balance > limits.high) {
+        return 'green'
+    }
+    return 'amber'
+}
+
+app.post('/ping-sms', (req, res) => {
+
     const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIiOiIifQ.G5ed2SpILJdLUmjoXVGYWTMSQlJ8boLptydemtOM52Q";
 
     fetch('https://santander.openbankproject.com/obp/v3.0.0/banks/santander.01.uk.sanuk/accounts/Funds/owner/account', {
@@ -52,19 +77,17 @@ app.post('/ping-sms', (req, res) => {
             //  sendSms('+447763133487', `Your balance is £${result.balance.amount} 😀`)
             let balance = result.balance.amount
             //        let number = '+447763133487'; 
-            let number = req.body.number || '+447763133487';
-            if (balance < 1000) {
+            let number = db.get('number') || '+447763133487';
+            if (getLevel(balance) === 'red') {
                 sendSms(number, `🛑`)
             }
-
-            if (balance >= 1000 && balance <= 2000) {
+            if (getLevel(balance) === 'amber') {
                 sendSms(number, `⚠️`)
             }
 
-            if (balance > 2000) {
+            if (getLevel(balance) === 'green') {
                 sendSms(number, `💚`)
             }
-
             return res.json(result)
         })
 
@@ -103,6 +126,7 @@ app.get('/account', (req, res) => {
         .then((result) => {
             console.log("------------------");
             console.log(result)
+            result.balance.responseStyle = db.get('style');
             return res.json(result)
         })
 
@@ -132,7 +156,19 @@ app.post('/accounts', (req, res) => {
         // next()
         // res.json(res.body);
     })
+})
 
+app.post('/limits', (req, res) => {
+    if(!(req.body.low && req.body.high)){
+        res.status(400);
+    }
+    db.set('limits', req.body);
+    res.status(200);
+})
+
+app.post('/response-style', (req, res) => {
+    db.set('limits', req.body.style);
+    res.status(200);
 })
 
 app.post('/transaction', (req, res) => {
