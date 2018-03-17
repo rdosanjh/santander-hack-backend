@@ -1,3 +1,4 @@
+'use strict'
 var hue = require("node-hue-api");
 
 var displayBridges = function(bridge) {
