@@ -180,10 +180,16 @@ app.post('/response-style', (req, res) => {
     res.status(200).send();
 })
 
-
 app.get('/response-style', (req, res) => {
     let style = db.get('style');
     res.json({style});
+})
+
+app.get('/suggested-limits',(req, res) => {
+    res.json({
+        low: 1200,
+        high:2200
+    })
 })
 
 app.post('/transaction', (req, res) => {
