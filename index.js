@@ -22,7 +22,7 @@ let changeLights = (color) => {
 
     }
     if(color === 'amber'){
-        
+        color = 'orange';
     }
     if(color === 'green'){
         
@@ -199,10 +199,7 @@ app.post('/limits', (req, res) => {
     res.status(200).send();
 })
 
-app.post('/limits', (req, res) => {
-    if(!(req.body.low && req.body.high)){
-        res.status(400);
-    }
+app.get('/limits', (req, res) => {
     let limits = db.get('limits');
     res.json({limits});
 })
