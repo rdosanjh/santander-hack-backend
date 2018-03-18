@@ -165,6 +165,25 @@ app.get('/account', (req, res) => {
 
 })
 
+app.get('/account_back', (req, res) => {
+    const TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyIiOiIifQ.G5ed2SpILJdLUmjoXVGYWTMSQlJ8boLptydemtOM52Q";
+
+    return fetch('https://santander.openbankproject.com/obp/v3.0.0/banks/santander.01.uk.sanuk/accounts/Funds/owner/account', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `DirectLogin token="${TOKEN}"`
+        }
+    }).then(result => result.json())
+        .then((result) => {
+            console.log("----------Backend--------");
+            console.log(result)
+            result.balance.responseStyle = db.get('style');
+            result.balance.level = getLevel(result.balance.amount)
+            return res.json(result)
+        })
+})
+
 app.post('/accounts', (req, res) => {
     // return new Promise(async (resolve, reject) => {
     //     resolve()
