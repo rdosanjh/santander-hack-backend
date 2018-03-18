@@ -77,15 +77,15 @@ app.get('/ping', (req, res) => {
 let getLevel = (balance) => {
     let limits = db.get('limits')
     
-    if (balance < limits.low) {
+    if (balance < 1000) {
         return 'red'
     }
 
-    if (balance >= limits.low && balance <= limits.high) {
+    if (balance >= 1000 && balance <= 2000) {
         return 'amber'
     }
 
-    if (balance > limits.high) {
+    if (balance > 2000) {
         return 'green'
     }
     return 'amber'
